@@ -149,6 +149,8 @@ project(":") {
     version = "0.2.0.${prop("buildNumber")}$versionSuffix"
     intellij {
         pluginName = "intellij-rust"
+        // BACKCOMPAT: 2018.3
+        // Use base version due to CLion has bundled IntelliLang plugin since 191
         if (baseIDE == "idea") {
             setPlugins(project(":intellij-toml"), "IntelliLang", "copyright")
         } else {
@@ -273,6 +275,8 @@ project(":toml") {
 
 project(":intelliLang") {
     intellij {
+        // BACKCOMPAT: 2018.3
+        // Use base version due to CLion has bundled IntelliLang plugin since 191
         version = prop("ideaVersion")
         setPlugins("IntelliLang")
     }
