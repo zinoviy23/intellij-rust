@@ -132,6 +132,52 @@ class AutoImportFixTest : AutoImportFixTestBase() {
         fn f<T>(foo: Foo/*caret*/<T>) {}
     """)
 
+    fun `test import item with type params 1`() = checkAutoImportFixByText("""
+        mod foo {
+            pub struct Foo<T>(T);
+            impl<T> Foo<T> {
+                fn bar() {}
+            }
+        }
+
+        fn main() {
+            let f = <error descr="Unresolved reference: `Foo`">Foo::/*caret*/<i32>::bar</error>();
+        }
+    """, """
+        use foo::Foo;
+
+        mod foo {
+            pub struct Foo<T>(T);
+            impl<T> Foo<T> {
+                fn bar() {}
+            }
+        }
+
+        fn main() {
+            let f = Foo::/*caret*/<i32>::bar();
+        }
+    """)
+
+    fun `test import item with type params 2`() = checkAutoImportFixByText("""
+        mod foo {
+            pub struct Foo<T> { x: T }
+        }
+
+        fn main() {
+            let f = <error descr="Unresolved reference: `Foo`">Foo/*caret*/</error>::<i32> {};
+        }
+    """, """
+        use foo::Foo;
+
+        mod foo {
+            pub struct Foo<T> { x: T }
+        }
+
+        fn main() {
+            let f = Foo/*caret*/::<i32> {};
+        }
+    """)
+
     fun `test import module`() = checkAutoImportFixByText("""
         mod foo {
             pub mod bar {
